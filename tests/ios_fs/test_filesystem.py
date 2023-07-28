@@ -33,3 +33,6 @@ class TestFilesystem:
         assert len(m.results) == 16
         assert len(m.timeline) == 16
         assert len(m.detected) == 1
+
+TestFilesystem().test_filesystem()
+TestFilesystem().test_detection('indicators/pegasus.stix2')
