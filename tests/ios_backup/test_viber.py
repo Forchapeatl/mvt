@@ -30,3 +30,6 @@ class TestViberModule:
         m.indicators = ind
         run_module(m)
         assert len(m.detected) == 1
+
+TestViberModule().test_viber()
+TestViberModule().test_detection('indicators/pegasus.stix2')
