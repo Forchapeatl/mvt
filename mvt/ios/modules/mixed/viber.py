@@ -16,7 +16,7 @@ VIBER_BACKUP_IDS = [
     "83b9310399a905c7781f95580174f321cd18fd97e",
 ]
 VIBER_ROOT_PATHS = [
-    "private/var/mobile/Containers/Shared/AppGroup/*/com.viber/database/Contacts.data",
+    "private/var/mobile/Containers/Shared/AppGroup/*/com.viber/database/viber-database.sqlite",
 ]
 
 class Viber(IOSExtraction):
