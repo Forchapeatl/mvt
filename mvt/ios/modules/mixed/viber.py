@@ -69,18 +69,36 @@ class Viber(IOSExtraction):
             backup_ids=VIBER_BACKUP_IDS, root_paths=VIBER_ROOT_PATHS
         )
         self.log.info("Found Viber database at path: %s", self.file_path)
+        try:
 
-        conn = sqlite3.connect(self.file_path)
-        cur = conn.cursor()
+            conn = sqlite3.connect(self.file_path)
+            cur = conn.cursor()
 
-        # Query all messages and join tables which can contain media attachments
-        # and links.
-        cur.execute(
+            # Query all messages while retrieving related data from the Viber messages and phone numbers
+            cur.execute(
             """
-            SELECT *
-            FROM ZVIBERMESSAGE;
-        """
-        )
+                SELECT *,
+                  ZPHONENUMBER.ZPHONE
+                FROM ZVIBERMESSAGE,ZPHONENUMBER 
+                WHERE ZVIBERMESSAGE.ZPHONENUMINDEX = ZPHONENUMBER.Z_PK;
+            """
+            )
+        except sqlite3.DatabaseError as exc:
+            conn.close()
+            if "database disk image is malformed" in str(exc):
+                self._recover_sqlite_db_if_needed(self.file_path, forced=True)
+                conn = sqlite3.connect(self.file_path)
+                cur = conn.cursor()
+                cur.execute(
+                """
+                  SELECT *,
+                    ZPHONENUMBER.ZPHONE
+                  FROM ZVIBERMESSAGE,ZPHONENUMBER 
+                  WHERE ZVIBERMESSAGE.ZPHONENUMINDEX = ZPHONENUMBER.Z_PK;
+                  """
+                )
+            else:
+                raise exc                        
         names = [description[0] for description in cur.description]
 
         for message_row in cur:
