@@ -27,6 +27,7 @@ class TestViberModule:
         ind.parse_stix2(indicator_file)
         # Adds a file that exists in the manifest.
         ind.ioc_collections[0]["domains"].append("tinyurl.com")
+        ind.ioc_collections[0]["domains"].append("kingdom-deals.com")        
         m.indicators = ind
         run_module(m)
         assert len(m.detected) == 1
